@@ -1,0 +1,4 @@
+name: layer-caas-base
+maintainer: Juju Core <juju@lists.ubuntu.com>
+summary: Base layer for CAAS charms.
+description: Comprises hook wrapper and helper functions for CAAS charms.

@@ -13,4 +13,4 @@ layer. It is now hosted together with the charms.reactive documentation in order
 to reduce the amount of places a charmer needs to search for info.
 
 [charm-helpers]: https://pythonhosted.org/charmhelpers/
-[layer-basic documentation]: https://charmsreactive.readthedocs.io/en/latest/layer-basic.html
+[layer-caas-base documentation]: https://charmsreactive.readthedocs.io/en/latest/layer-basic.html

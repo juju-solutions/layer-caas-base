@@ -6,11 +6,13 @@ import tempfile
 from charmhelpers.core.hookenv import log
 
 
-def container_spec_set(spec):
+def container_spec_set(spec, for_application=True):
     log('set container spec:\n{}'.format(spec), level='TRACE')
     with tempfile.NamedTemporaryFile(delete=False) as spec_file:
         spec_file.write(spec.encode("utf-8"))
     cmd = ['container-spec-set', "--file", spec_file.name]
+    if for_application:
+        cmd.append("--application")
 
     try:
         ret = subprocess.call(cmd)

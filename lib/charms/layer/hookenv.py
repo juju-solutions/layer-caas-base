@@ -6,13 +6,11 @@ import tempfile
 from charmhelpers.core.hookenv import log
 
 
-def container_spec_set(spec, for_application=True):
-    log('set container spec:\n{}'.format(spec), level='TRACE')
+def pod_spec_set(spec):
+    log('set pod spec:\n{}'.format(spec), level='TRACE')
     with tempfile.NamedTemporaryFile(delete=False) as spec_file:
         spec_file.write(spec.encode("utf-8"))
-    cmd = ['container-spec-set', "--file", spec_file.name]
-    if for_application:
-        cmd.append("--application")
+    cmd = ['pod-spec-set', "--file", spec_file.name]
 
     try:
         ret = subprocess.call(cmd)
@@ -22,5 +20,5 @@ def container_spec_set(spec, for_application=True):
     except OSError as e:
         if e.errno != errno.ENOENT:
             raise
-    log_message = 'container-spec-set failed'
+    log_message = 'pod-spec-set failed'
     log(log_message, level='INFO')

@@ -1,25 +1,4 @@
 import os
-import sys
-
-
-def lsb_release():
-    """Return /etc/lsb-release in a dict"""
-    d = {}
-    with open('/etc/lsb-release', 'r') as lsb:
-        for l in lsb:
-            k, v = l.split('=')
-            d[k.strip()] = v.strip()
-    return d
-
-
-def reload_interpreter(python):
-    """
-    Reload the python interpreter to ensure that all deps are available.
-
-    Newly installed modules in namespace packages sometimes seemt to
-    not be picked up by Python 3.
-    """
-    os.execve(python, [python] + list(sys.argv), os.environ)
 
 
 def init_config_states():

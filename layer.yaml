@@ -1,1 +1,2 @@
-
+tactics:
+  - tactics.wheelhouse.WheelhouseTactic

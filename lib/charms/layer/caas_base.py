@@ -1,25 +1,27 @@
+import errno
 import os
-import sys
+import subprocess
+import tempfile
+
+from charmhelpers.core.hookenv import log
 
 
-def lsb_release():
-    """Return /etc/lsb-release in a dict"""
-    d = {}
-    with open('/etc/lsb-release', 'r') as lsb:
-        for l in lsb:
-            k, v = l.split('=')
-            d[k.strip()] = v.strip()
-    return d
+def pod_spec_set(spec):
+    log('set pod spec:\n{}'.format(spec), level='TRACE')
+    with tempfile.NamedTemporaryFile(delete=False) as spec_file:
+        spec_file.write(spec.encode("utf-8"))
+    cmd = ['pod-spec-set', "--file", spec_file.name]
 
-
-def reload_interpreter(python):
-    """
-    Reload the python interpreter to ensure that all deps are available.
-
-    Newly installed modules in namespace packages sometimes seemt to
-    not be picked up by Python 3.
-    """
-    os.execve(python, [python] + list(sys.argv), os.environ)
+    try:
+        ret = subprocess.call(cmd)
+        os.remove(spec_file.name)
+        if ret == 0:
+            return
+    except OSError as e:
+        if e.errno != errno.ENOENT:
+            raise
+    log_message = 'pod-spec-set failed'
+    log(log_message, level='INFO')
 
 
 def init_config_states():

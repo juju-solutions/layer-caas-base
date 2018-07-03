@@ -6,6 +6,7 @@ sys.path.append('lib')
 
 from charms.layer import basic
 basic.init_config_states()
+basic.import_layer_libs()
 
 
 # This will load and run the appropriate @hook and other decorated

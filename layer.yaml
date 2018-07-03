@@ -1,2 +1,4 @@
+includes:
+  - 'layer:options'
 tactics:
   - tactics.wheelhouse.WheelhouseTactic

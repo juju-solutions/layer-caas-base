@@ -2,6 +2,7 @@ import errno
 import os
 import subprocess
 import tempfile
+import yaml
 from importlib import import_module
 from pathlib import Path
 
@@ -9,6 +10,8 @@ from charmhelpers.core.hookenv import log
 
 
 def pod_spec_set(spec):
+    if not isinstance(spec, str):
+        spec = yaml.dump(spec)
     log('set pod spec:\n{}'.format(spec), level='TRACE')
     with tempfile.NamedTemporaryFile(delete=False) as spec_file:
         spec_file.write(spec.encode("utf-8"))
@@ -80,7 +83,7 @@ def import_layer_libs():
     """
     for module_file in Path('lib/charms/layer').glob('*'):
         module_name = module_file.stem
-        if module_name in ('__init__', 'basic', 'execd') or not (
+        if module_name in ('__init__', 'caas_base', 'execd') or not (
             module_file.suffix == '.py' or module_file.is_dir()
         ):
             continue

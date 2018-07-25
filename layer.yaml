@@ -1,3 +1,6 @@
+name: layer-caas-base
+maintainer: Juju Core <juju@lists.ubuntu.com>
+description: Base layer for CAAS charms.
 includes:
   - 'layer:options'
 tactics:

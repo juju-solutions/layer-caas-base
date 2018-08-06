@@ -21,12 +21,13 @@ def pod_spec_set(spec):
         ret = subprocess.call(cmd)
         os.remove(spec_file.name)
         if ret == 0:
-            return
+            return True
     except OSError as e:
         if e.errno != errno.ENOENT:
             raise
     log_message = 'pod-spec-set failed'
     log(log_message, level='INFO')
+    return False
 
 
 def init_config_states():

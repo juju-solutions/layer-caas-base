@@ -2,7 +2,7 @@
 
 # Load modules from $JUJU_CHARM_DIR/lib
 import sys
-sys.path.append('lib')
+sys.path.insert(0, 'lib')
 
 from charms.layer import caas_base
 caas_base.init_config_states()

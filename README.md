@@ -47,7 +47,7 @@ def create_container():
     image_info = layer.docker_resource.get_info('my-image')
     config = hookenv.config()
 
-    layer.caas_base.pod_spec_set({
+    success = layer.caas_base.pod_spec_set({
         'containers': [
             {
                 'name': 'my-charm',
@@ -77,6 +77,9 @@ def create_container():
             },
         ],
     })
-    layer.status.maintenance('creating container')
-    set_flag('charm.my-charm.started')
+    if success:
+        layer.status.maintenance('creating container')
+        set_flag('charm.my-charm.started')
+    else:
+        layer.status.blocked('k8s spec failed to deploy')
 ```

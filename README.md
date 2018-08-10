@@ -15,14 +15,15 @@ includes:
   - 'layer:docker-resource'
 ```
 
-The charm can then define its Docker image as a resource in `metadata.yaml`:
+The charm can then define its container image as a resource in `metadata.yaml`:
 
 ```yaml
 name: my-charm
 resources:
   my-image:
-    description: 'Docker image for this charm'
-    type: docker
+    description: 'Image for this charm'
+    type: oci-image
+    auto-fetch: true
 ```
 
 When ready, the charm should call `pod_spec_set` with the relevant data structure:
@@ -32,11 +33,6 @@ from charmhelpers.core import hookenv
 from charms.reactive import set_flag, when, when_not
 
 from charms import layer
-
-
-@when_not('layer.docker-resource.my-image.fetched')
-def fetch_image():
-    layer.docker_resource.fetch('my-image')
 
 
 @when('layer.docker-resource.my-image.available')

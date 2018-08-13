@@ -22,7 +22,7 @@ name: my-charm
 resources:
   my-image:
     description: 'Docker image for this charm'
-    type: docker
+    type: oci-image
 ```
 
 When ready, the charm should call `pod_spec_set` with the relevant data structure:

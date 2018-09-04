@@ -12,7 +12,6 @@ from charmhelpers.core.hookenv import log
 def pod_spec_set(spec):
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
-    log('set pod spec:\n{}'.format(spec), level='TRACE')
     with tempfile.NamedTemporaryFile(delete=False) as spec_file:
         spec_file.write(spec.encode("utf-8"))
     cmd = ['pod-spec-set', "--file", spec_file.name]

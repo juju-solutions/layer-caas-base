@@ -1,32 +1,21 @@
-import errno
 import os
-import subprocess
-import tempfile
-import yaml
 from importlib import import_module
 from pathlib import Path
+from subprocess import run, PIPE, CalledProcessError
 
+import yaml
 from charmhelpers.core.hookenv import log
 
 
 def pod_spec_set(spec):
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
-    with tempfile.NamedTemporaryFile(delete=False) as spec_file:
-        spec_file.write(spec.encode("utf-8"))
-    cmd = ['pod-spec-set', "--file", spec_file.name]
 
     try:
-        ret = subprocess.call(cmd)
-        os.remove(spec_file.name)
-        if ret == 0:
-            return True
-    except OSError as e:
-        if e.errno != errno.ENOENT:
-            raise
-    log_message = 'pod-spec-set failed'
-    log(log_message, level='INFO')
-    return False
+        run(['pod-spec-set'], stdout=PIPE, stderr=PIPE, check=True, input=spec.encode('utf-8'))
+    except CalledProcessError as err:
+        log(f'pod-spec-set encountered an error: {err.stderr.decode("utf-8")}', level='ERROR')
+        raise
 
 
 def init_config_states():

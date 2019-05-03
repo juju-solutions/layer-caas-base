@@ -2,6 +2,7 @@ import os
 from importlib import import_module
 from pathlib import Path
 from subprocess import run, PIPE, CalledProcessError
+import re
 
 import yaml
 from charmhelpers.core.hookenv import log
@@ -14,7 +15,13 @@ def pod_spec_set(spec):
     try:
         run(['pod-spec-set'], stdout=PIPE, stderr=PIPE, check=True, input=spec.encode('utf-8'))
     except CalledProcessError as err:
-        log(f'pod-spec-set encountered an error: {err.stderr.decode("utf-8")}', level='ERROR')
+        stderr = err.stderr.decode('utf-8').strip()
+        log(f'pod-spec-set encountered an error: `{stderr}`', level='ERROR')
+
+        if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
+            log('Ignored error due to pod-spec-set getting called during app removal', level='INFO')
+            return
+
         raise
 
 

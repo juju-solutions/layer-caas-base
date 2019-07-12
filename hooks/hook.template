@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
+# flake8: noqa: E402
 
 # Load modules from $JUJU_CHARM_DIR/lib
 import sys
 sys.path.insert(0, 'lib')
 
 from charms.layer import caas_base
-caas_base.init_config_states()
 caas_base.import_layer_libs()
+from charmhelpers.core import hookenv
+hookenv.atstart(caas_base.init_config_states)
+hookenv.atexit(caas_base.clear_config_states)
 
 
 # This will load and run the appropriate @hook and other decorated

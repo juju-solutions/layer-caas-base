@@ -10,7 +10,7 @@ from charmhelpers.core.hookenv import log
 
 
 def pod_spec_set(spec, k8s_resources=None):
-    
+
     def run_cmd(cmd_args, std_in):
         log(f'pod-spec-set {cmd_args}, \n{std_in}', level='ERROR')
         try:
@@ -23,11 +23,10 @@ def pod_spec_set(spec, k8s_resources=None):
                 log('Ignored error due to pod-spec-set getting called during app removal', level='INFO')
                 return
             raise
-    
+
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
-    
-    
+
     cmd_args = ['pod-spec-set']
     if k8s_resources is None:
         return run_cmd(cmd_args, spec.encode('utf-8'))
@@ -35,16 +34,13 @@ def pod_spec_set(spec, k8s_resources=None):
     # include k8s_resources.
     if not isinstance(k8s_resources, str):
         k8s_resources = yaml.dump(k8s_resources)
-        
+
     fp = tempfile.NamedTemporaryFile(delete=False)
-    log(f'pod-spec-set k8s_resources 1 \n{k8s_resources}', level='ERROR')
     fp.write(k8s_resources.encode('utf-8'))
+    fp.close()
     cmd_args += ['--k8s-resources', fp.name]
     run_cmd(cmd_args, spec.encode('utf-8'))
-    
-    log(f'pod-spec-set k8s_resources 2 \n{k8s_resources}', level='ERROR')
-    fp.close()
-        
+
 
 def init_config_states():
     import yaml

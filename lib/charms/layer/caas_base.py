@@ -10,36 +10,26 @@ from charmhelpers.core.hookenv import log
 
 
 def pod_spec_set(spec, k8s_resources=None):
-
-    def run_cmd(cmd_args, std_in):
-        log(f'pod-spec-set {cmd_args}, \n{std_in}', level='ERROR')
-        try:
-            run(cmd_args, stdout=PIPE, stderr=PIPE, check=True, input=std_in)
-        except CalledProcessError as err:
-            stderr = err.stderr.decode('utf-8').strip()
-            log(f'pod-spec-set encountered an error: `{stderr}`', level='ERROR')
-
-            if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
-                log('Ignored error due to pod-spec-set getting called during app removal', level='INFO')
-                return
-            raise
-
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
 
-    cmd_args = ['pod-spec-set']
-    if k8s_resources is None:
-        return run_cmd(cmd_args, spec.encode('utf-8'))
+    if k8s_resources is not None:
+        if not isinstance(k8s_resources, str):
+            k8s_resources = yaml.dump(k8s_resources)
 
-    # include k8s_resources.
-    if not isinstance(k8s_resources, str):
-        k8s_resources = yaml.dump(k8s_resources)
+        spec += k8s_resources
 
-    fp = tempfile.NamedTemporaryFile(delete=False)
-    fp.write(k8s_resources.encode('utf-8'))
-    fp.close()
-    cmd_args += ['--k8s-resources', fp.name]
-    run_cmd(cmd_args, spec.encode('utf-8'))
+    try:
+        run(['pod-spec-set'], stdout=PIPE, stderr=PIPE, check=True, input=spec.encode('utf-8'))
+    except CalledProcessError as err:
+        stderr = err.stderr.decode('utf-8').strip()
+        log(f'pod-spec-set encountered an error: `{stderr}`', level='ERROR')
+
+        if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
+            log('Ignored error due to pod-spec-set getting called during app removal', level='INFO')
+            return
+
+        raise
 
 
 def init_config_states():

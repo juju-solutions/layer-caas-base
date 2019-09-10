@@ -3,7 +3,6 @@ from importlib import import_module
 from pathlib import Path
 from subprocess import run, PIPE, CalledProcessError
 import re
-import tempfile
 
 import yaml
 from charmhelpers.core.hookenv import log

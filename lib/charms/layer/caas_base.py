@@ -8,9 +8,15 @@ import yaml
 from charmhelpers.core.hookenv import log
 
 
-def pod_spec_set(spec):
+def pod_spec_set(spec, k8s_resources=None):
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
+
+    if k8s_resources is not None:
+        if not isinstance(k8s_resources, str):
+            k8s_resources = yaml.dump(k8s_resources)
+
+        spec += k8s_resources
 
     try:
         run(['pod-spec-set'], stdout=PIPE, stderr=PIPE, check=True, input=spec.encode('utf-8'))

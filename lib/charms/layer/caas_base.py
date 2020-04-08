@@ -8,6 +8,20 @@ import yaml
 from charmhelpers.core.hookenv import log
 
 
+def run_hook_command(cmd, stdin):
+    try:
+        run([cmd], stdout=PIPE, stderr=PIPE, check=True, input=stdin.encode('utf-8'))
+    except CalledProcessError as err:
+        stderr = err.stderr.decode('utf-8').strip()
+        log(f'{cmd} encountered an error: `{stderr}`', level='ERROR')
+
+        if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
+            log(f'Ignored error due to {cmd} getting called during app removal', level='INFO')
+            return
+
+        raise
+
+
 def pod_spec_set(spec, k8s_resources=None):
     if not isinstance(spec, str):
         spec = yaml.dump(spec)
@@ -15,20 +29,15 @@ def pod_spec_set(spec, k8s_resources=None):
     if k8s_resources is not None:
         if not isinstance(k8s_resources, str):
             k8s_resources = yaml.dump(k8s_resources)
-
         spec += k8s_resources
 
-    try:
-        run(['pod-spec-set'], stdout=PIPE, stderr=PIPE, check=True, input=spec.encode('utf-8'))
-    except CalledProcessError as err:
-        stderr = err.stderr.decode('utf-8').strip()
-        log(f'pod-spec-set encountered an error: `{stderr}`', level='ERROR')
+    run_hook_command("pod-spec-set", spec)
 
-        if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
-            log('Ignored error due to pod-spec-set getting called during app removal', level='INFO')
-            return
 
-        raise
+def k8s_raw_set(spec):
+    if not isinstance(spec, str):
+        spec = yaml.dump(spec)
+    run_hook_command("k8s-raw-set", spec)
 
 
 def init_config_states():

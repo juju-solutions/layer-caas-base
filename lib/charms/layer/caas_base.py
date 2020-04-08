@@ -13,10 +13,12 @@ def run_hook_command(cmd, stdin):
         run([cmd], stdout=PIPE, stderr=PIPE, check=True, input=stdin.encode('utf-8'))
     except CalledProcessError as err:
         stderr = err.stderr.decode('utf-8').strip()
+        log(f'{cmd} encountered an error: `{stderr}`', level='ERROR')
+
         if re.match(r'^ERROR application [\w-]+ not alive$', stderr):
             log(f'Ignored error due to {cmd} getting called during app removal', level='INFO')
             return
-        log(f'{cmd} encountered an error: `{stderr}`', level='ERROR')
+
         raise
 
 

@@ -4,4 +4,4 @@ description: Base layer for CAAS charms.
 includes:
   - 'layer:options'
 tactics:
-  - tactics.wheelhouse.WheelhouseTactic
+  - tactics.wheelhouse.CAASWheelhouseTactic

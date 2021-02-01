@@ -1,7 +1,6 @@
 import logging
 
 from charmtools.build.tactics import WheelhouseTactic
-from charmtools.build import builder
 from charmtools import utils
 
 log = logging.getLogger(__name__)
@@ -34,8 +33,3 @@ class CAASWheelhouseTactic(WheelhouseTactic):
                                  for file in temp_dir.walkfiles()])
             # copy everything over from temp_dir to charm's /lib
             temp_dir.merge_tree(self.dest)
-
-
-# Completely patch out the base WheelhouseTactic to work around:
-# https://github.com/juju/charm-tools/issues/596
-builder.WheelhouseTactic = CAASWheelhouseTactic
